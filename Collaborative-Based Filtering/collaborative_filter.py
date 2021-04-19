@@ -11,21 +11,19 @@ def readMovies():
                 lines += 1
             else:
                 movies[int(row[0])] = row[1]
-                numMovies += 1
-                
+                numMovies += 1      
     
     return movies, numMovies
 
-def readUserRatings(movies, numMovies):
+def readUserRatings(movies):
     userRatings = {}
-    sortedMovies = list(movies.values())
-    sortedMovies.sort()
 
     with open("ratings_small.csv", encoding="UTF-8") as csvFile:
         reader = csv.reader(csvFile)
         lines = 0
-        ratedMovies = [0] * numMovies
+        ratedMovies = []
         currentUser = 1
+        numUsers = 0
         numIgnored = 0
         for row in reader:
             if lines == 0:
@@ -35,20 +33,22 @@ def readUserRatings(movies, numMovies):
                 userId, movieId, movieRating = int(row[0]), int(row[1]), float(row[2])
                 if userId != currentUser:
                     userRatings[currentUser] = ratedMovies
-                    ratedMovies = [0] * numMovies
+                    ratedMovies = []
                     currentUser = userId
+                    numUsers += 1
 
                 try:
-                    movieName = movies[movieId]
-                    index = sortedMovies.index(movieName)
-                    ratedMovies[index] = movieRating
+                    movieName = movies[movieId] # check if movieId exists
+                    ratedMovies.append([movieId, movieRating])
                 except KeyError:
                     numIgnored += 1 # certain movie ids are in ratings_small.csv, but not in movies_metadata.csv, so just ignore these ids
-        
-    return userRatings
+
+    userRatings[currentUser] = ratedMovies
+    numUsers += 1
+
+    return userRatings, numUsers
 
 
 movies, numMovies = readMovies()
-userRatings = readUserRatings(movies, numMovies)
-
+userRatings, numUsers = readUserRatings(movies)
 
