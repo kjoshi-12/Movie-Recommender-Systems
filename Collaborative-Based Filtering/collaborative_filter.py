@@ -96,6 +96,7 @@ userRatings, numUsers = readUserRatings(movies)
 
 matrix = generateMatrix(userRatings, numUsers)
 
-print(matrix[0])
+print(matrix[0]) # ratings between 1 and all other users
+
 
 
