@@ -93,12 +93,6 @@ def generateMatrix(userRatings, numUsers):
 
 movies, numMovies = readMovies()
 userRatings, numUsers = readUserRatings(movies)
-#Hard Coded Test Cases, specify a userId in the brackets of userRatings
-ratings_x = userRatings[1]
-ratings_y = userRatings[2]
-
-similarity = cosine_similarity(ratings_x, ratings_y)
-print(similarity)
 
 matrix = generateMatrix(userRatings, numUsers)
 
