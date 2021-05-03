@@ -1,4 +1,6 @@
 import csv
+from scipy import spatial
+
 
 def readMovies():
     movies = {}
@@ -48,7 +50,31 @@ def readUserRatings(movies):
 
     return userRatings, numUsers
 
+#Cosine Similarity computation: helps in choosing the movies that are most similar to another user's movie taste
+def cosine_similarity(ratings_x, ratings_y):
+    ratings_x_values = []
+    ratings_y_values = []
+    ratings_both = zip(ratings_x,ratings_y)
+    for rating in ratings_both:
+        curRating_x = rating[0][1]
+        curRating_y = rating[1][1]
+        ratings_x_values.append(curRating_x)
+        ratings_y_values.append(curRating_y)
+    result = 1 - spatial.distance.cosine(ratings_x_values, ratings_y_values)
+    return result
+
+
+
+
+
 
 movies, numMovies = readMovies()
 userRatings, numUsers = readUserRatings(movies)
+#Hard Coded Test Cases, specify a userId in the brackets of userRatings
+ratings_x = userRatings[1]
+ratings_y = userRatings[2]
+
+similarity = cosine_similarity(ratings_x, ratings_y)
+print(similarity)
+
 
