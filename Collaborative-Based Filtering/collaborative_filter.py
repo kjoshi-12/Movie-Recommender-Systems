@@ -54,6 +54,7 @@ def determineVectors(ratings1, ratings2):
     user1Movies = list(ratings1.keys())
     user2Movies = list(ratings2.keys())
     movies = list(set(user1Movies) | set(user2Movies))
+
     user1Ratings = []
     for id in movies:
         try:
@@ -81,22 +82,42 @@ def generateMatrix(userRatings, numUsers):
     matrix = []
     for i in range(1, numUsers + 1):
         similarity = []
-        for j in range(i + 1, numUsers + 1):
+        for j in range(1, numUsers + 1):
             ratings1 = userRatings[i]
             ratings2 = userRatings[j]
             user1Ratings, user2Ratings = determineVectors(ratings1, ratings2)
-
             sim = cosine_similarity(user1Ratings, user2Ratings)
-            similarity.append(sim)
+            similarity.append([sim, j])
         matrix.append(similarity)
     return matrix
+
+def determineRating(similarityMatrix, userRatings, userId, movieId, numSimilarUsers):
+    sortedSimilarities = sorted(similarityMatrix[userId - 1], reverse = True, key = lambda sim: sim[0])
+
+    index = 0
+    k = 0
+    ratingSum = 0
+    similaritySum = 0
+    while k < numSimilarUsers and index < len(sortedSimilarities):
+        simUserId = sortedSimilarities[index][1]
+        if simUserId == userId:
+            index += 1
+            continue
+        userMovies = userRatings[simUserId]
+        if movieId in userMovies:
+            ratingSum += (sortedSimilarities[index][0] * userMovies[movieId])
+            similaritySum += sortedSimilarities[index][0]
+            k += 1
+        index += 1
+
+    return ratingSum / similaritySum
 
 movies, numMovies = readMovies()
 userRatings, numUsers = readUserRatings(movies)
 
 matrix = generateMatrix(userRatings, numUsers)
 
-print(matrix[0])
+print("Predicting rating for movie {} for user {}".format(movies[1], 1))
 
-
+print(determineRating(matrix, userRatings, 1, 1, 10))
 
