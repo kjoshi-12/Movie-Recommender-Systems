@@ -202,7 +202,7 @@ film('Mulan',family,'Yifei Liu', 'Donnie Yen','PG-13').
 
 film('The Little Rascals',family,'Travis Tedford', 'Bug Hall','PG').
 film('Wolfwalkers', family,'Honor Kneafsey', 'Eva Whittaker','PG').
-film('Pinocchio',family,'Federico Ielapi', 'Roberto Benigni','PG-13').
+film('Cars 2',family,'Owen Wilson', 'Larry The Cable Guy','G').
 film('The Princess Bride',family,'Cary Elwes', 'Mandy Patinkin','PG').
 film('The Sandlot',family,'Tom Guiry', 'Mike Vitar','PG').
 film('Spirited Away',family,'Daveigh Chase', 'Suzanne Pleshette','PG').
