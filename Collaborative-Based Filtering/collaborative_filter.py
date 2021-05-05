@@ -1,5 +1,7 @@
 import csv
 from scipy import spatial
+from sklearn.metrics import mean_squared_error
+import math
 
 
 def readMovies():
@@ -76,6 +78,11 @@ def determineVectors(ratings1, ratings2):
 def cosine_similarity(ratings_x, ratings_y):
     result = 1 - spatial.distance.cosine(ratings_x, ratings_y)
     return result
+
+#Root Mean Squared Error: Evaluation metric testing how well the prediction was
+def root_mean_squared_error(actual_ratings, predicted_ratings):
+    rmse = math.sqrt(mean_squared_error(actual_ratings, predicted_ratings))
+    return rmse
 
 
 def generateMatrix(userRatings, numUsers):
