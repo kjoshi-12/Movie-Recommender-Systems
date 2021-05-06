@@ -15,7 +15,7 @@ def readMovies(write):
                 genre = row[1].split("|")
                 genre = [genre[i].strip() for i in range(len(genre))]    
                 actors = row[2].split("|")
-                size = 0 if len(actors) < 3 else 3
+                size = len(actors) if len(actors) < 5 else 5
                 actors = [actors[i].strip() for i in range(size)]
                 companies = row[5].split("|")
                 size = 2 if len(companies) > 1 else 1
@@ -52,21 +52,28 @@ def watchedMovies(watched, movies):
 
 movies = readMovies(False)
 
-features = watchedMovies(["Mission: Impossible - Fallout", "Mission: Impossible - Ghost Protocol", "Mission: Impossible - Rogue Nation", "Skyfall", "Spectre", "Casino Royale", "Batman Begins", "The Dark Knight"], movies)
+watchedMoviesList = ["Mission: Impossible - Fallout", "Mission: Impossible - Ghost Protocol", "Spectre",  "Batman Begins"]
+features = watchedMovies(watchedMoviesList, movies)
 
 from pyswip import Prolog
 
 prolog = Prolog()
 prolog.consult("knowledge_base.pl")
 
-query = "recommendGenre(["
+query = "recommendActors(["
 
-query += ",".join(f'"{w}"' for w in features[0])
-query += "], Movie)"
+query += ",".join(f'"{w}"' for w in features[1])
+query += "], {}, Movie)".format(1 / len(features[1]))
 
+print("Watched movies: ", watchedMoviesList)
+print()
 print(query)
+print("\nRecommended Movies: ")
 i = 0
 for soln in prolog.query(query):
-    if i < 10: print(soln["Movie"])
+    if i < 100: 
+        movie = soln["Movie"].decode("UTF-8")
+        if movie not in watchedMoviesList: 
+            print(movie)
+            i += 1
     else: break
-    i += 1
