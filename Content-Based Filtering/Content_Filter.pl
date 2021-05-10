@@ -237,6 +237,10 @@ film('E.T. the Extra-Terrestrial',family,'Emilio Estevez', 'Drew Berrymore','PG'
 % on certain content such as genre, authors,rating, or combination of
 % options.
 
+import:-
+    csv_read_file('userData.csv', Data, [functor(likes), separator(0',)]),
+    maplist(assert, Data).
+
 start:- write('*Welcome To Our Movie Recommender*'),nl,nl,
 write('Select 1 to view all movies related by genre'),nl,
 write('Select 2 to view all movies that are simlilar based on a rating'),nl,
@@ -244,6 +248,7 @@ write('Select 3 to view all movies that are similar based on a actor/actress'),n
 write('Select 4 to view all movies that the contain the same Actor/Actress & Rating'),nl,
 write('Select 5 to view all movies that the contain the same Actor/Actress & Genre'),nl,
 write('Select 6 to view all movies that the contain the same Genre & Rating'),nl,
+write('Select 7 to view all movies based on user\'s favorite genre'),nl,
 write(' '), read(X), option(X).
 
 % print movies with same genre based on user choice
@@ -277,6 +282,11 @@ option(5):-write('Enter the Actor/Actress followed by a Genre'),nl,nl,
 option(6):-write('Enter the genre followed by a Rating'),nl,nl,
     read(X),read(Y),forall(film(Z,X,_,_,Y),writeln(Z)),again.
 
+% print movies based on user's favorite genre
+
+option(7):-write('Enter your user number'),nl,nl,
+    read(X),likes(X,Z),forall(film(Y,Z,_,_,_),writeln(Y)),again.
+
 
 % give the user the choice to make another selection
 % based on a genre,rating,actor/actress,or combination.
@@ -287,5 +297,6 @@ again:- write('Would You Like To Search Again?'),nl,nl,
     write('Select 4 to view all movies that the contain the same Actor/Actress & Rating'),nl,
     write('Select 5 to view all movies that the contain the same Actor/Actress & Genre'),nl,
     write('Select 6 to view all movies that the contain the same Genre & Rating'),nl,
+    write('Select 7 to view all movies based on user\'s favorite genre'),nl,
     write('Select 0 to exit.'),nl,
     read(X),option(X);false.
