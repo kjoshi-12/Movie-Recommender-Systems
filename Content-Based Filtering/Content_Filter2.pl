@@ -11,7 +11,7 @@ write('Select 4 to view all movies that the contain the same Actor/Actress & Rat
 write('Select 5 to view all movies that contain the same Actor/Actress & Genre'),nl,
 write('Select 6 to view all movies that contain the same Genre & Rating'),nl,
 write('Select 9 to view all movies that contain two specific genres'),nl,
-write('Select 10to view all movies that contain two specific Actors/Actress'),nl,
+write('Select 10 to view all movies that contain two specific Actors/Actress'),nl,
 write(' '), read(X), option(X).
 
 % print movies with same genre based on user choice
