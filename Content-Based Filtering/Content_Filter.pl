@@ -1,4 +1,3 @@
-
 % Knowledge bases/Rules
 % struct for data film(title,genre,actors,rating)
 
@@ -241,6 +240,22 @@ import:-
     csv_read_file('userData.csv', Data, [functor(likes), separator(0',)]),
     maplist(assert, Data).
 
+my_flatten(X,[X]) :- \+ is_list(X).
+my_flatten([],[]).
+my_flatten([X|Xs],Zs) :- my_flatten(X,Y), my_flatten(Xs,Ys), append(Y,Ys,Zs).
+
+%The code used to find mode of a list was found on internet: https://stackoverflow.com/questions/14691479/how-to-find-the-mode-of-a-list-in-prolog
+count_elt([],_,0):-!.
+count_elt([H|T],H,C):-count_elt(T,H,C1),C is C1+1,!.
+count_elt([_|T],E,C):-count_elt(T,E,C).
+
+listMode([],0) :- !.
+listMode([_],1) :- !.
+listMode([H1|[H2|T]], M) :-count_elt([H1|[H2|T]],H1,C),listMode([H2|T],C1),C > C1,M is C,!.
+listMode([_|[H2|T]],M) :- listMode([H2|T],M).
+
+get_mode([H|T],M):-listMode([H|T],K),count_elt([H|T],M,K).
+
 start:- write('*Welcome To Our Movie Recommender*'),nl,nl,
 write('Select 1 to view all movies related by genre'),nl,
 write('Select 2 to view all movies that are simlilar based on a rating'),nl,
@@ -249,6 +264,7 @@ write('Select 4 to view all movies that the contain the same Actor/Actress & Rat
 write('Select 5 to view all movies that the contain the same Actor/Actress & Genre'),nl,
 write('Select 6 to view all movies that the contain the same Genre & Rating'),nl,
 write('Select 7 to view all movies based on user\'s favorite genre'),nl,
+write('Select 8 to view all movies based on previously watched movies'),nl,
 write(' '), read(X), option(X).
 
 % print movies with same genre based on user choice
@@ -287,6 +303,9 @@ option(6):-write('Enter the genre followed by a Rating'),nl,nl,
 option(7):-write('Enter your user number'),nl,nl,
     read(X),likes(X,Z),forall(film(Y,Z,_,_,_),writeln(Y)),again.
 
+option(8):- csv_read_file('movie.csv', Data, [functor(fact), separator(0',)]),maplist(assert, Data), 
+           setof([X, Y], fact(X,Y), Z), my_flatten(Z,L), get_mode(L,P),forall(film(M,P,_,_,_),writeln(M)),again.
+
 
 % give the user the choice to make another selection
 % based on a genre,rating,actor/actress,or combination.
@@ -298,5 +317,6 @@ again:- write('Would You Like To Search Again?'),nl,nl,
     write('Select 5 to view all movies that the contain the same Actor/Actress & Genre'),nl,
     write('Select 6 to view all movies that the contain the same Genre & Rating'),nl,
     write('Select 7 to view all movies based on user\'s favorite genre'),nl,
+    write('Select 8 to view all movies based on previously watched movies'),nl,
     write('Select 0 to exit.'),nl,
     read(X),option(X);false.
