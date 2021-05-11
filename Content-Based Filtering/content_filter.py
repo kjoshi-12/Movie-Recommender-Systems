@@ -11,15 +11,16 @@ def writeMovies():
                 lines += 1
             else:
                 genre = row[1].split("|")
+                size = -1 if len(genre) < 3 else 3
+                if size == -1: continue
                 genre = [genre[i].strip() for i in range(len(genre))]    
                 actors = row[2].split("|")
-                size = len(actors) if len(actors) < 5 else 5
+                size = -1 if len(actors) < 5 else 5
+                if size == -1: continue
                 actors = [actors[i].strip() for i in range(size)]
-                companies = row[5].split("|")
-                size = len(companies) if len(companies) < 3 else 3
-                companies = [companies[i].strip() for i in range(size)]
 
-                fact = "film({}, {}, {}, {}, {}, {}).\n".format(f'"{row[0]}"', ",".join(f'"{w}"' for w in genre), ",".join(f'"{w}"' for w in actors), f'"{row[3]}"', row[4], ",".join(f'"{w}"' for w in companies))
+                fact = "film({}, {}, {}, {}).\n".format(f'"{row[0]}"', ",".join(f'"{w}"' for w in genre), ",".join(f'"{w}"' for w in actors), row[4])
+
                 knowledgeBase.write(fact)
 
 movies = writeMovies()
