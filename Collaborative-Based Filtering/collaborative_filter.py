@@ -79,7 +79,7 @@ def cosine_similarity(ratings_x, ratings_y):
     result = 1 - spatial.distance.cosine(ratings_x, ratings_y)
     return result
 
-#Root Mean Squared Error: Evaluation metric testing how well the prediction was
+#Root Mean Squared Error: Evaluation metric testing how well the rating prediction was to the actual rating
 def root_mean_squared_error(actual_ratings, predicted_ratings):
     rmse = math.sqrt(mean_squared_error(actual_ratings, predicted_ratings))
     return rmse
@@ -116,15 +116,71 @@ def determineRating(similarityMatrix, userRatings, userId, movieId, numSimilarUs
             similaritySum += sortedSimilarities[index][0]
             k += 1
         index += 1
+    #similaritySum = 0
+    try:
+        determined_rating = ratingSum / similaritySum
+    except ZeroDivisionError:
+        determined_rating = 0
+    return determined_rating
 
-    return ratingSum / similaritySum
+#Function to retrieve the movieId given the title
+def get_movieId(title,dict):
+    for id, movie_title in dict.items():
+         if title == movie_title:
+             return title
 
-movies, numMovies = readMovies()
-userRatings, numUsers = readUserRatings(movies)
+def main():
+    movies, numMovies = readMovies()
+    userRatings, numUsers = readUserRatings(movies)
 
-matrix = generateMatrix(userRatings, numUsers)
+    matrix = generateMatrix(userRatings, numUsers)
 
-print("Predicting rating for movie {} for user {}".format(movies[1], 1))
 
-print(determineRating(matrix, userRatings, 1, 1, 10))
+    read_user = int(input("Please enter User ID: "))
+    current_user = read_user   #The active user on the service
 
+
+    #Main process: Finds recommended movies
+    predicted_recommended_movies = {}
+    movieId_iterator = 1
+    while movieId_iterator < numMovies:
+        predicted_rating = determineRating(matrix, userRatings, current_user, movieId_iterator, 10)
+        user_ratings = userRatings[1]
+        if predicted_rating >= 3.0 and (movieId_iterator in user_ratings):
+            # Add movie to recommended movies data stuct
+            predicted_recommended_movies[movies[movieId_iterator]] = predicted_rating
+        movieId_iterator += 1
+
+    #Sorts the recomendations based on the predicted rating
+    prm_sorted = {movie_title: rating for movie_title, rating in sorted(predicted_recommended_movies.items(), reverse=True, key=lambda item: item[1])}
+    print(prm_sorted)
+
+    #Obtains top 10 movies
+    recommended_movies = prm_sorted.items()
+    top_10 = list(recommended_movies)[:10]
+    recommendations = []
+    predicted_ratings = []
+    for movie_rating in top_10:
+        recommendations.append(movie_rating[0])
+        predicted_ratings.append(movie_rating[1])
+
+    #Prints recommended movies to the console
+    print("\nHere are your recommended movies:")
+    for recommendation in recommendations:
+        print(recommendation)
+
+    #Gets the actual ratings of the movies
+    actual_ratings = []
+    for title in recommendations:
+        movie_id = get_movieId(title,movies)
+        user_ratings = userRatings[1]
+        try:
+            actual_ratings.append(user_ratings[movie_id])
+        except KeyError:
+            actual_ratings.append(0)
+    print(actual_ratings)
+    # accuracy = root_mean_squared_error(actual_ratings,predicted_ratings)
+    # print("Accuracy of predictions/recommendations: {}".format(accuracy))
+
+if __name__ == "__main__":
+    main()
