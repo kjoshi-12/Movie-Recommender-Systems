@@ -63,6 +63,7 @@ read(X),read(Y),forall(film(Z,X,Y,_,_,_,_,_,_);
                film(Z,Y,X,_,_,_,_,_,_),
                writeln(Z)),again.
 
+% print movies based on two specfic Actors/Actress
 
 option(10):-write('Enter two Actors/Actress'),nl,
 read(X),read(Y),forall(film(Z,_,_,X,Y,_,_,_,_);film(Z,_,_,Y,X,_,_,_,_)
