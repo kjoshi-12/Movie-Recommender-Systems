@@ -240,9 +240,9 @@ import:-
     csv_read_file('userData.csv', Data, [functor(likes), separator(0',)]),
     maplist(assert, Data).
 
-my_flatten(X,[X]) :- \+ is_list(X).
-my_flatten([],[]).
-my_flatten([X|Xs],Zs) :- my_flatten(X,Y), my_flatten(Xs,Ys), append(Y,Ys,Zs).
+makeOneDArray(X,[X]) :- \+ is_list(X).
+makeOneDArray([],[]).
+makeOneDArray([X|Xs],Zs) :- makeOneDArray(X,Y), makeOneDArray(Xs,Ys), append(Y,Ys,Zs).
 
 %The code used to find mode of a list was found on internet: https://stackoverflow.com/questions/14691479/how-to-find-the-mode-of-a-list-in-prolog
 count_elt([],_,0):-!.
@@ -304,7 +304,7 @@ option(7):-write('Enter your user number'),nl,nl,
     read(X),likes(X,Z),forall(film(Y,Z,_,_,_),writeln(Y)),again.
 
 option(8):- csv_read_file('movie.csv', Data, [functor(fact), separator(0',)]),maplist(assert, Data), 
-           setof([X, Y], fact(X,Y), Z), my_flatten(Z,L), get_mode(L,P),forall(film(M,P,_,_,_),writeln(M)),again.
+           setof([X, Y], fact(X,Y), Z), makeOneDArray(Z,L), get_mode(L,P),forall(film(M,P,_,_,_),writeln(M)),again.
 
 
 % give the user the choice to make another selection
