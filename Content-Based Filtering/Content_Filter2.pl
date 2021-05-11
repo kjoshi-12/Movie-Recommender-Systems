@@ -3,6 +3,10 @@
 % on certain content such as genre, authors,rating, or combination of
 % options.
 
+import:-
+    csv_read_file('userData.csv', Data, [functor(likes), separator(0',)]),
+    maplist(assert, Data).
+
 start:- write('*Welcome To Our Movie Recommender*'),nl,nl,
 write('Select 1 to view all movies related by genre'),nl,
 write('Select 2 to view all movies that are simlilar based on a rating'),nl,
@@ -10,13 +14,15 @@ write('Select 3 to view all movies that are similar based on a actor/actress'),n
 write('Select 4 to view all movies that the contain the same Actor/Actress & Rating'),nl,
 write('Select 5 to view all movies that contain the same Actor/Actress & Genre'),nl,
 write('Select 6 to view all movies that contain the same Genre & Rating'),nl,
-write('Select 9 to view all movies that contain two specific genres'),nl,
-write('Select 10 to view all movies that contain two specific Actors/Actress'),nl,
+write('Select 7 to view all movies based on user\'s favorite genre'),nl,
+write('Select 8 to view all movies based on user\'s favorite actor'),nl,
+write('Select 10 to view all movies that contain two specific genres'),nl,
+write('Select 11 to view all movies that contain two specific Actors/Actress'),nl,
 write(' '), read(X), option(X).
 
 % print movies with same genre based on user choice
 
-option(1):-write('Select from the following Genres ("Family", "Crime", "Comedy", "Drama",ETC)'),nl,
+option(1):-write('Select from the following Genres (\'Family\', \'Crime\', \'Comedy\', \'Drama\',ETC)'),nl,
 read(X),forall(film(Y,X,_,_,_,_,_,_,_);
                film(Y,_,X,_,_,_,_,_,_),
                writeln(Y)),again.
@@ -57,15 +63,22 @@ option(6):-write('Enter the genre followed by a Rating'),nl,nl,
    read(X),read(Y),nl,forall(film(Z,X,_,_,_,_,_,_,Y)
                            ;film(Z,_,X,_,_,_,_,_,Y),writeln(Z)),again.
 
+option(7):-write('Enter your user number'),nl,nl,
+    read(X),likes(X,Y,_),forall(film(Z,Y,_,_,_,_,_,_,_);film(Z,_,Y,_,_,_,_,_,_),writeln(Z)),again.
+
+option(8):-write('Enter your user number'),nl,nl,
+    read(X),likes(X,_,A),forall(film(Y,_,_,A,_,_,_,_,_);film(Y,_,_,_,A,_,_,_,_);film(Y,_,_,_,_,A,_,_,_);
+	film(Y,_,_,_,_,_,A,_,_);film(Y,_,_,_,_,_,_,A,_),writeln(Y)),again.
+
 % print movies based on two specfic genres of movies
-option(9):-write('Select from the following Genres ("Family", "Crime", "Comedy", "Drama",ETC)'),nl,
+option(10):-write('Select from the following Genres (\'Family\', \'Crime\', \'Comedy\', \'Drama\',ETC)'),nl,
 read(X),read(Y),forall(film(Z,X,Y,_,_,_,_,_,_);
                film(Z,Y,X,_,_,_,_,_,_),
                writeln(Z)),again.
 
 % print movies based on two specfic Actors/Actress
 
-option(10):-write('Enter two Actors/Actress'),nl,
+option(11):-write('Enter two Actors/Actress'),nl,
 read(X),read(Y),forall(film(Z,_,_,X,Y,_,_,_,_);film(Z,_,_,Y,X,_,_,_,_)
                            ;film(Z,_,_,_,X,Y,_,_,_);film(Z,_,_,_,Y,X,_,_,_)
                            ;film(Z,_,_,_,_,X,Y,_,_);film(Z,_,_,_,_,Y,X,_,Z)
@@ -86,7 +99,8 @@ again:- write('Would You Like To Search Again?'),nl,nl,
     write('Select 4 to view all movies that the contain the same Actor/Actress & Rating'),nl,
     write('Select 5 to view all movies that the contain the same Actor/Actress & Genre'),nl,
     write('Select 6 to view all movies that the contain the same Genre & Rating'),nl,
-    write('Select 9 to view all movies that contain two specific genres'),nl,
-    write('Select 10 to view all movies that contain two specific Actors/Actress'),nl,
+    write('Select 7 to view all movies based on user\'s favorite genre'),nl,
+    write('Select 10 to view all movies that contain two specific genres'),nl,
+    write('Select 11 to view all movies that contain two specific Actors/Actress'),nl,
     write('Select 0 to exit.'),nl,
     read(X),option(X);false.

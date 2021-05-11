@@ -1,11 +1,11 @@
-movieId,genre
-1,crime
-2,crime
-3,comedy
-4,family
-5,family
-6,drama
-7,drama
-8,drama
-9,comedy
-10,crime
+movieId,genre1,actor
+1,Crime,Vin Diesel
+2,Science Fiction,William Forsythe
+3,History,Demi Moore
+4,Family,Tim Allen
+5,Comedy,Lana Condor
+6,Music,Idina Menzel
+7,Family,Tom Hanks
+8,Drama,Ewan McGregor
+9,Action,Chris Evans
+10,Crime,Jean Reno
