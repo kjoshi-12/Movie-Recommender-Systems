@@ -62,77 +62,87 @@ write(' '), read(X), option(X).
 % print movies with same genre based on user choice
 
 option(1):-write('Select from the following Genres (\'Family\', \'Crime\', \'Comedy\', \'Drama\',ETC)'),nl,
-read(X),forall(film(Y,X,_,_,_,_,_,_,_);
+read(X),open('recommendations.txt',write, Stream),forall(film(Y,X,_,_,_,_,_,_,_);
                film(Y,_,X,_,_,_,_,_,_),
-               writeln(Y)),again.
+               writeln(Stream,Y)),close(Stream),again.
 
 
 % print movies based on ratings
 
-option(2):- write('Enter a Rating from 4.0 - 10.0 '),
-nl,nl, read(X),forall(film(Y,_,_,_,_,_,_,_,X),writeln(Y)),again.
+option(2):- write('Enter a Rating from 4.0 - 10.0 '),nl,nl, 
+	read(X),open('recommendations.txt',write, Stream),forall(film(Y,_,_,_,_,_,_,_,X),writeln(Stream,Y)),
+	close(Stream),again.
 
 % print movies based on a single actor or actress
 % order of the actors does not matter
 
-option(3) :-write('Enter a Actor/Actress Name'),nl,nl,read(X),
+option(3) :-write('Enter a Actor/Actress Name'),nl,nl,read(X),open('recommendations.txt',write, Stream),
     forall(film(Y,_,_,X,_,_,_,_,_);film(Y,_,_,_,X,_,_,_,_)
            ;film(Y,_,_,_,_,X,_,_,_);film(Y,_,_,_,_,_,X,_,_)
-           ;film(Y,_,_,_,_,_,_,X,_),writeln(Y)),again.
+           ;film(Y,_,_,_,_,_,_,X,_),writeln(Stream,Y)),close(Stream),again.
 
 % print movies based on actors/actress & rating
 
 option(4) :-write('Enter the Actor/Actress followed by a Rating'),nl,nl,
-    read(X),read(Z),forall(film(Y,_,_,X,_,_,_,_,Z);film(Y,_,_,_,X,_,_,_,Z)
+    read(X),read(Z),open('recommendations.txt',write, Stream),forall(film(Y,_,_,X,_,_,_,_,Z)
+	   ;film(Y,_,_,_,X,_,_,_,Z)
            ;film(Y,_,_,_,_,X,_,_,Z);film(Y,_,_,_,_,_,X,_,Z)
-           ;film(Y,_,_,_,_,_,_,X,Z),writeln(Y)),again.
+           ;film(Y,_,_,_,_,_,_,X,Z),writeln(Stream,Y)),close(Stream),again.
 
 % print movies based on actors/actress & genre
 
 option(5):-write('Enter the Actor/Actress followed by a Genre'),nl,nl,
-    read(X),read(Y),forall(film(Z,Y,_,X,_,_,_,_,_);film(Z,_,Y,X,_,_,_,_,_)
-                           ;film(Z,_,Y,_,X,_,_,_,_);film(Z,Y,_,_,X,_,_,_,_)
-                           ;film(Z,Y,_,_,_,X,_,_,_);film(Z,_,Y,_,_,X,_,_,Z)
-                           ;film(Z,Y,_,_,_,_,X,_,Z);film(Z,_,Y,_,_,_,X,_,Z);
-                           film(Z,Y,_,_,_,_,_,X,Z);film(Z,_,Y,_,_,_,_,X,Z),writeln(Z)),again.
+    read(X),read(Y),open('recommendations.txt',write, Stream),forall(film(Z,Y,_,X,_,_,_,_,_);
+			   film(Z,_,Y,X,_,_,_,_,_);film(Z,_,Y,_,X,_,_,_,_);
+                           film(Z,Y,_,_,X,_,_,_,_);film(Z,Y,_,_,_,X,_,_,_)
+                           ;film(Z,_,Y,_,_,X,_,_,Z);film(Z,Y,_,_,_,_,X,_,Z);
+                           film(Z,_,Y,_,_,_,X,_,Z);film(Z,Y,_,_,_,_,_,X,Z);
+                           film(Z,_,Y,_,_,_,_,X,Z),writeln(Stream,Z)),close(Stream),again.
 
 % print movies based on genre & rating
 
 option(6):-write('Enter the genre followed by a Rating'),nl,nl,
-   read(X),read(Y),nl,forall(film(Z,X,_,_,_,_,_,_,Y)
-                           ;film(Z,_,X,_,_,_,_,_,Y),writeln(Z)),again.
+   read(X),read(Y),nl,open('recommendations.txt',write, Stream),forall(film(Z,X,_,_,_,_,_,_,Y)
+                           ;film(Z,_,X,_,_,_,_,_,Y),writeln(Stream,Z)),close(Stream),again.
 
-option(7):-write('Enter your user number'),nl,nl,
-    read(X),likes(X,G,_),write('Your favorite genre is: '),write(G),nl,forall(film(M,G,_,_,_,_,_,_,_);
-	film(M,_,G,_,_,_,_,_,_),writeln(M)),again.
+%prints movies based on user's favorite genre
 
-option(8):-write('Enter your user number'),nl,nl,
-    read(X),likes(X,_,A),write('Your favorite actor is: '),write(A),nl,forall(film(M,_,_,A,_,_,_,_,_);
-	film(M,_,_,_,A,_,_,_,_);film(M,_,_,_,_,A,_,_,_);film(M,_,_,_,_,_,A,_,_);film(M,_,_,_,_,_,_,A,_),
-	writeln(M)),again.
+option(7):-import,write('Enter your user number'),nl,nl,
+    read(X),likes(X,G,_),open('recommendations.txt',write, Stream),write(Stream,'Your favorite genre is: '),
+	writeln(Stream,G),nl,forall(film(M,G,_,_,_,_,_,_,_);film(M,_,G,_,_,_,_,_,_),writeln(Stream,M)),
+	close(Stream),again.
+
+%prints movies based on user's favorite actor
+
+option(8):-import,write('Enter your user number'),nl,nl,
+    read(X),likes(X,_,A),open('recommendations.txt',write, Stream),write(Stream,'Your favorite actor is: '),
+	writeln(Stream,A),forall(film(M,_,_,A,_,_,_,_,_);film(M,_,_,_,A,_,_,_,_);film(M,_,_,_,_,A,_,_,_);
+	film(M,_,_,_,_,_,A,_,_);film(M,_,_,_,_,_,_,A,_),writeln(Stream,M)),close(Stream),again.
 
 option(9):- csv_read_file('movie.csv', Data, [functor(fact), separator(0',)]),maplist(assert, Data), 
-    setof([W, X, Y], fact(W,X,Y), Z), makeOneDArray(Z,L),twoMostCommon(L,G,_),forall(film(M,G,_,_,_,_,_,_,_);
-	film(M,_,G,_,_,_,_,_,_),writeln(M)),again.
+    setof([W, X, Y], fact(W,X,Y), Z), makeOneDArray(Z,L),twoMostCommon(L,G,_),
+	open('recommendations.txt',write, Stream),forall(film(M,G,_,_,_,_,_,_,_);film(M,_,G,_,_,_,_,_,_),
+	writeln(Stream,M)),close(Stream),again.
 
 option(10):- csv_read_file('movie.csv', Data, [functor(fact), separator(0',)]),maplist(assert, Data), 
-    setof([W, X, Y], fact(W,X,Y), Z), makeOneDArray(Z,L),twoMostCommon(L,G1,G2),forall(film(M,G1,G2,_,_,_,_,_,_);
-	film(M,G2,G1,_,_,_,_,_,_),writeln(M)),again.
+    setof([W, X, Y], fact(W,X,Y), Z), makeOneDArray(Z,L),twoMostCommon(L,G1,G2), 
+	open('recommendations.txt',write, Stream),forall(film(M,G1,G2,_,_,_,_,_,_);film(M,G2,G1,_,_,_,_,_,_),
+	writeln(Stream,M)),close(Stream),again.
 
 % print movies based on two specfic genres of movies
 option(11):-write('Select from the following Genres (\'Family\', \'Crime\', \'Comedy\', \'Drama\',ETC)'),nl,
-read(X),read(Y),forall(film(Z,X,Y,_,_,_,_,_,_);
+read(X),read(Y),open('recommendations.txt',write, Stream),forall(film(Z,X,Y,_,_,_,_,_,_);
                film(Z,Y,X,_,_,_,_,_,_),
-               writeln(Z)),again.
+               writeln(Stream,Z)),close(Stream),again.
 
 % print movies based on two specfic Actors/Actress
 
 option(12):-write('Enter two Actors/Actress'),nl,
-read(X),read(Y),forall(film(Z,_,_,X,Y,_,_,_,_);film(Z,_,_,Y,X,_,_,_,_)
+read(X),read(Y),open('recommendations.txt',write, Stream),forall(film(Z,_,_,X,Y,_,_,_,_);film(Z,_,_,Y,X,_,_,_,_)
                            ;film(Z,_,_,_,X,Y,_,_,_);film(Z,_,_,_,Y,X,_,_,_)
                            ;film(Z,_,_,_,_,X,Y,_,_);film(Z,_,_,_,_,Y,X,_,Z)
                            ;film(Z,_,_,_,_,_,X,Y,Z);film(Z,_,_,_,_,_,Y,X,Z),
-                           writeln(Z)),again.
+                           writeln(Stream,Z)),close(Stream),again.
 
 
 
